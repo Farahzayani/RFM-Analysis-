@@ -1,6 +1,7 @@
 from datetime import datetime 
 import pandas as pd 
 import matplotlib.pyplot as plt
+import seaborn as sns 
 
 
 data = pd.read_csv("Database/rfm_data.csv")
@@ -27,18 +28,32 @@ print (df.head())
 #statistics of RFM values
 print (df.describe()) 
 
-#visualisations about rfm values 
-plt.figure(figsize=(10, 6))
-plt.bar (df['Recency'].unique(), df['Recency'].value_counts().values)
-plt.xlabel('recency')
-plt.ylabel('count')
+#visualisations about rfm values :
+
+
+# Distribution des métriques RFM
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))  
+
+# Distribution de la Récence
+sns.histplot(df['Recency'], bins=30, kde=True, ax=axes[0], color='cornflowerblue')  #kde=True : Adds a KDE curve (Kernel Density Estimate) on top of the histogram
+axes[0].set_title('Recency Distribution')
+axes[0].set_xlabel('Days since last purchase')
+
+# Distribution de la Fréquence
+sns.histplot(df['Frequency'], bins=30, kde=True, ax=axes[1], color='blue')
+axes[1].set_title('Frequency Distribution')
+axes[1].set_xlabel('Number of purchases')
+
+# Distribution de la Valeur Monétaire
+sns.histplot(df['Monetary'], bins=30, kde=True, ax=axes[2], color='darkblue')
+axes[2].set_title('Monetary Distribution')
+axes[2].set_xlabel('Total amount of purchases')
+
+plt.tight_layout()  #automatically adjusts the spacing between subplots
 plt.show()
 
-
-plt.figure(figsize=(10, 6))
-plt.scatter([x for x in range(len(df['Monetary']))] ,df['Monetary'] , color='g' )
-plt.xlabel('Customers')
-plt.ylabel('Tolat Amount') 
-plt.title('Amount of purchases per customer')
+#Boxplot to detect outliers 
+plt.figure(figsize=(4, 5))
+sns.boxplot(y=df['Monetary'])
+plt.title('Monetary - Boxplot')
 plt.show()
-
