@@ -24,6 +24,7 @@ df=data.groupby('CustomerID').agg({
 #rename columns 
 df = df.rename(columns = {'PurchaseDate':'Recency','OrderID':'Frequency','TransactionAmount':'Monetary'})
 print (df.head())
+df.to_csv ('Database/rfm_values.csv', index=False, encoding='utf-8')
 
 #statistics of RFM values
 print (df.describe()) 
