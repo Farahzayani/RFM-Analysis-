@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt 
 from sklearn.metrics import silhouette_score
+import plotly.express as px
 
 
 df = pd.read_csv("Database/rfm_values.csv")
@@ -101,10 +102,27 @@ df['R_Score'] = df['KMeans_Cluster'].map(cluster_to_r_score)
 df['F_Score'] = df['KMeans_Cluster'].map(cluster_to_f_score)
 df['M_Score'] = df['KMeans_Cluster'].map(cluster_to_m_score)
 
-# Score global pondéré 
+#global score for each client  
 df['RFM_Global_Score'] = (df['R_Score']  * 0.5 +    #the most important factor ==> 50% of it participate in global rfm score
                            df['F_Score'] * 0.3 +    #important more then monetary so we take 30% of it 
                            df['M_Score'] * 0.2)     #it doesn't always guarantee future activity so just 20% (lowest height) 
 
 
-df.to_csv ('Database/rfm_scores.csv', index=False, encoding='utf-8')
+df.to_csv ('Database/rfm_scores.csv', index=False, encoding='utf-8') 
+
+
+#clusters distribution 
+fig = plt.figure(figsize=(12, 10))
+ax = fig.add_subplot(111, projection='3d')
+scatter = ax.scatter(df['Recency'], df['Frequency'], df['Monetary'], 
+                    c=df['KMeans_Cluster'], cmap='viridis', alpha=0.6, s=30)
+
+ax.set_xlabel('Recency')
+ax.set_ylabel('Frequency')
+ax.set_zlabel('Monetary')
+ax.set_title('Clusters RFM - 3D') 
+
+# Ajouter une légende
+legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
+ax.add_artist(legend1)
+plt.show()
